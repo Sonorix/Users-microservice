@@ -8,10 +8,11 @@ package com.users.ms.model;
  * @author Administrador
  */
 public class UserDto {
+    private String id;
     private String nombre;
     private String email;
     private String password;
-    private String tipoUsuario; // CLIENTE, MUSICO, ADMIN
+    private String tipoUsuario; // cliente, musico, admin
     private String telefono;
 
     public UserDto(String nombre, String email, String password, String tipoUsuario, String telefono) {
@@ -20,6 +21,19 @@ public class UserDto {
         this.password = password;
         this.tipoUsuario = tipoUsuario;
         this.telefono = telefono;
+    }
+    
+    public UserDto(String id, String nombre, String email, String password, String tipoUsuario, String telefono) {
+        this.id = id;
+        this.nombre = nombre;
+        this.email = email;
+        this.password = password;
+        this.tipoUsuario = tipoUsuario;
+        this.telefono = telefono;
+    }
+    
+    public String getId() {
+        return id;
     }
 
     public String getNombre() {

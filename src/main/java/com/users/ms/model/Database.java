@@ -41,7 +41,6 @@ public class Database {
         if (dotenv.get("DB_PASSWORD") == null) {
             throw new RuntimeException("Database password not found in environment variables");
         }
-
     }
     
     public Connection getConn() throws ClassNotFoundException, SQLException {

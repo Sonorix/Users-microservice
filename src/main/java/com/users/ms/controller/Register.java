@@ -4,6 +4,8 @@
  */
 package com.users.ms.controller;
 
+import com.users.ms.dao.UserDao;
+import com.users.ms.model.UserDto;
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.json.Json;
 import jakarta.json.JsonException;
@@ -66,11 +68,21 @@ public class Register extends HttpServlet {
             String tipoUsuario = data.getString("tipoUsuario");
             String telefono = data.getString("telefono");
             
+            UserDto userDto = new UserDto(nombre, email, password, tipoUsuario, telefono);
+            new UserDao().createUser(userDto);
+            
+            data = Json.createObjectBuilder()
+                    .add("message", "User created succesfully")
+                    .build();
+            
+            try (PrintWriter out = response.getWriter()) {
+                out.print(data.toString());
+                out.flush();
+            }
+                
             
             
-        } catch (IllegalArgumentException e) {
-            handleError(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-        } catch (JsonException e ) {
+        } catch (Exception e) {
             handleError(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
     }
@@ -88,10 +100,14 @@ public class Register extends HttpServlet {
         for (String field : requiredFields) {
             if (!data.containsKey(field)) {
                 missing.add(field);
+                continue;
             }
+            
+            if (data.getString(field).isEmpty())
+                missing.add(field);
         }
         
-        if (!missing.isEmpty()) throw new IllegalArgumentException("Some required fields are missing: " + String.join(", ", missing));
+        if (!missing.isEmpty()) throw new IllegalArgumentException("Some required fields are missing or are empty: " + String.join(", ", missing));
     }
     
     private void handleError(HttpServletResponse response, int statusCode, String message) throws IOException {
