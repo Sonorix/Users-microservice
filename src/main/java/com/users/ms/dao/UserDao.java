@@ -53,7 +53,40 @@ public class UserDao {
     }
     
     public UserDto getUserByEmail(String email) {
-        return null;
+        String sql = "SELECT nombre, email, contraseña, tipo_usuario, telefono FROM users WHERE email = ? LIMIT 1";
+        
+        try {
+            Connection conn = new Database().getConn();
+            
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+            
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                UserDto user = new UserDto(
+                    rs.getString("nombre"),
+                    rs.getString("email"),
+                    rs.getString("contraseña"),
+                    rs.getString("tipo_usuario"),
+                    rs.getString("telefono")
+                );
+                
+                rs.close();
+                stmt.close();
+                conn.close();
+                
+                return user;
+            }
+            
+            rs.close();
+            stmt.close();
+            conn.close();
+            return null;
+            
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving user: " + e.getMessage(), e);
+        }
     }
     
     private boolean verifyEmailExistence(String email) throws Exception {
